@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Tra Cứu Điểm Thi</title>
+    <title>TRA CỨU ĐIỂM THI GIỮA KÌ II, MÔN GIÁO DỤC KINH TẾ VÀ PHÁP LUẬT</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -27,31 +27,34 @@
                 <img src="https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=600" 
                      alt="Logo" class="w-full h-full object-cover">
             </div>
-            <h1 class="text-3xl font-bold text-blue-600">Hệ Thống Tra Cứu Điểm Thi</h1>
+            <h1 class="text-3xl font-bold text-blue-600">TRA CỨU ĐIỂM THI GIỮA KÌ II, MÔN GIÁO DỤC KINH TẾ VÀ PHÁP LUẬT</h1>
         </header>
 
         <!-- Search Section -->
         <div class="max-w-md mx-auto mb-8">
             <div class="search-box relative bg-white rounded-lg shadow-sm border border-gray-300 flex items-center px-4 py-3 transition-all">
-                <i class="fas fa-search text-gray-400 mr-3"></i>
-                <input type="text" id="searchInput" 
+                <i class="fas fa-user text-gray-400 mr-3"></i>
+                <input type="text" id="nameInput" 
                        class="flex-1 outline-none text-gray-700 placeholder-gray-400"
-                       placeholder="Nhập SBD để tra cứu...">
-                <span id="clearBtn" class="text-gray-400 cursor-pointer hidden">
-                    <i class="fas fa-times"></i>
-                </span>
+                       placeholder="Nhập họ tên học sinh...">
+                <button id="searchBtn" class="bg-blue-600 text-white px-4 py-1 rounded-md text-sm ml-2 hover:bg-blue-700 transition-colors">
+                    Tìm kiếm
+                </button>
             </div>
+            <p class="text-sm text-gray-500 mt-2 text-center">Nhập ít nhất 2 ký tự để tìm kiếm</p>
         </div>
 
         <!-- Results Table -->
-        <div class="bg-white rounded-lg shadow overflow-hidden">
+        <div class="bg-white rounded-lg shadow overflow-hidden hidden" id="resultsContainer">
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SBD</th>
+                            ${showClassColumn ? '<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lớp</th>' : ''}
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Họ và tên</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Điểm thi</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trắc nghiệm</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tự luận</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tổng điểm</th>
                         </tr>
                     </thead>
                     <tbody id="resultsBody" class="bg-white divide-y divide-gray-200">
@@ -59,74 +62,120 @@
                     </tbody>
                 </table>
             </div>
-            <div id="emptyState" class="py-12 text-center">
-                <i class="fas fa-search text-gray-300 text-4xl mb-3"></i>
-                <p class="text-gray-500">Nhập SBD để tra cứu thông tin</p>
-            </div>
+        </div>
+        <div id="emptyState" class="py-12 text-center bg-gray-50 rounded-lg">
+            <i class="fas fa-search text-gray-400 text-4xl mb-3"></i>
+            <p class="text-gray-600 font-medium">Nhập tên học sinh để tra cứu điểm</p>
+            <p class="text-sm text-gray-500 mt-2">Nhập ít nhất 2 ký tự tên học sinh để tìm kiếm chính xác hơn</p>
         </div>
 
         <!-- Footer -->
         <footer class="mt-8 text-center text-gray-500 text-sm">
-            <p>© 2023 Hệ Thống Tra Cứu Điểm Thi. Bản quyền thuộc về Bộ Giáo Dục.</p>
+            <p>© 2025 CỔNG TRA CỨU ĐIỂM THI MÔN GIÁO DỤC KINH TẾ VÀ PHÁP LUẬT. Bản quyền thuộc về Minh Tâm.</p>
         </footer>
     </div>
 
     <script>
-        // Sample data
-        const studentData = [
-            { sbd: "001", name: "Nguyễn Văn A", score: 28.5 },
-            { sbd: "002", name: "Trần Thị B", score: 24.0 },
-            { sbd: "003", name: "Lê Văn C", score: 26.75 },
-            { sbd: "004", name: "Phạm Thị D", score: 22.5 },
-            { sbd: "005", name: "Hoàng Văn E", score: 27.25 },
-            { sbd: "006", name: "Vũ Thị F", score: 23.0 },
-            { sbd: "007", name: "Đặng Văn G", score: 25.5 },
-            { sbd: "008", name: "Bùi Thị H", score: 29.0 },
-            { sbd: "009", name: "Đỗ Văn I", score: 21.75 },
-            { sbd: "010", name: "Ngô Thị K", score: 20.5 }
-        ];
-
         // DOM elements
-        const searchInput = document.getElementById('searchInput');
-        const clearBtn = document.getElementById('clearBtn');
+        const classSelect = document.getElementById('classSelect');
+        let studentData = [];
+
+        // Load data from CSV
+        fetch('student_scores.csv')
+            .then(response => response.text())
+            .then(csvData => {
+                console.log('--- Loading Student Data ---');
+                console.log('Raw CSV data length:', csvData.length);
+                if (!csvData || csvData.trim() === '') {
+                    console.error('Error: Empty CSV data received');
+                    alert('Không thể đọc dữ liệu học sinh. Vui lòng kiểm tra lại file dữ liệu.');
+                    return;
+                }
+                
+                const lines = csvData.split('\n').filter(line => line.trim() !== '');
+                console.log('Total lines found:', lines.length);
+                console.log('Header row:', lines[0]);
+                console.log('First student:', lines[1] || 'No students found');
+                console.log('Last student:', lines[lines.length-1] || 'No students found');
+                studentData = lines.slice(1).map(line => {
+                    const [cls, name, multipleChoice, essay, total] = line.split(',');
+                    console.log('Parsed student:', {cls, name, multipleChoice, essay, total}); // Debug log
+                    return {
+                        class: cls.trim(),
+                        name: name.trim(),
+                        multipleChoice: parseFloat(multipleChoice),
+                        essay: parseFloat(essay),
+                        total: parseFloat(total)
+                    };
+                }).filter(student => !isNaN(student.multipleChoice) && !isNaN(student.essay));
+            })
+            .catch(error => {
+                console.error('Error loading student data:', error);
+                alert('Không thể tải dữ liệu học sinh. Vui lòng thử lại sau.');
+                console.log('Current studentData:', studentData); // Debug log
+            });
+
+        const nameInput = document.getElementById('nameInput');
+        const searchBtn = document.getElementById('searchBtn');
         const resultsBody = document.getElementById('resultsBody');
         const emptyState = document.getElementById('emptyState');
-
-        // Initial render
-        renderResults(studentData);
+        const resultsContainer = document.getElementById('resultsContainer');
 
         // Event listeners
-        searchInput.addEventListener('input', handleSearch);
-        clearBtn.addEventListener('click', clearSearch);
+        searchBtn.addEventListener('click', handleSearch);
 
         // Functions
         function handleSearch() {
-            const searchTerm = searchInput.value.trim().toLowerCase();
+            const nameTerm = nameInput.value.trim().toLowerCase();
             
-            if (searchTerm.length > 0) {
-                clearBtn.classList.remove('hidden');
-            } else {
-                clearBtn.classList.add('hidden');
+            if (nameTerm.length < 2) {
+                alert("Vui lòng nhập ít nhất 2 ký tự tên học sinh");
+                return;
             }
 
-            const filteredData = studentData.filter(student => 
-                student.sbd.toLowerCase().includes(searchTerm)
-            );
+            console.log('\n--- Starting Search ---');
+            console.log('Search term:', nameTerm);
+            console.log('Total students loaded:', studentData.length);
+            
+            if (!studentData || studentData.length === 0) {
+                console.error('Error: No student data available');
+                alert('Hệ thống chưa có dữ liệu học sinh. Vui lòng tải lại trang.');
+                return;
+            }
+
+            const filteredData = studentData.filter(student => {
+                const match = student.name.toLowerCase().includes(nameTerm);
+                console.log(`Checking: ${student.name} - Match: ${match}`);
+                return match;
+            });
+
+            const showClassColumn = filteredData.length > 1 && 
+                                 new Set(filteredData.map(s => s.name)).size < filteredData.length;
+            
+            console.log('Search results:', {
+                totalMatches: filteredData.length,
+                showClassColumn: showClassColumn,
+                results: filteredData
+            });
             
             renderResults(filteredData);
-        }
-
-        function clearSearch() {
-            searchInput.value = '';
-            clearBtn.classList.add('hidden');
-            renderResults(studentData);
         }
 
         function renderResults(data) {
             resultsBody.innerHTML = '';
             
+            resultsContainer.classList.remove('hidden');
+            
             if (data.length === 0) {
                 emptyState.classList.remove('hidden');
+                emptyState.querySelector('p').textContent = "Không tìm thấy học sinh phù hợp";
+                resultsBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
+                            Không có dữ liệu điểm cho học sinh này
+                        </td>
+                    </tr>
+                `;
                 return;
             }
             
@@ -137,9 +186,11 @@
                 row.className = 'table-row hover:bg-gray-50 transition-colors';
                 
                 row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${student.sbd}</td>
+                    ${showClassColumn ? `<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${student.class}</td>` : ''}
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${student.name}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${student.score}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${student.multipleChoice}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${student.essay}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${student.total}</td>
                 `;
                 
                 resultsBody.appendChild(row);
