@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Tra Cứu Điểm Thi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .search-box:focus-within {
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
+        .table-row:hover {
+            background-color: #f8fafc;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="flex flex-col items-center mb-8">
+            <div class="w-20 h-20 rounded-full overflow-hidden mb-4 shadow-md">
+                <img src="https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=600" 
+                     alt="Logo" class="w-full h-full object-cover">
+            </div>
+            <h1 class="text-3xl font-bold text-blue-600">Hệ Thống Tra Cứu Điểm Thi</h1>
+        </header>
+
+        <!-- Search Section -->
+        <div class="max-w-md mx-auto mb-8">
+            <div class="search-box relative bg-white rounded-lg shadow-sm border border-gray-300 flex items-center px-4 py-3 transition-all">
+                <i class="fas fa-search text-gray-400 mr-3"></i>
+                <input type="text" id="searchInput" 
+                       class="flex-1 outline-none text-gray-700 placeholder-gray-400"
+                       placeholder="Nhập SBD để tra cứu...">
+                <span id="clearBtn" class="text-gray-400 cursor-pointer hidden">
+                    <i class="fas fa-times"></i>
+                </span>
+            </div>
+        </div>
+
+        <!-- Results Table -->
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SBD</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Họ và tên</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Điểm thi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsBody" class="bg-white divide-y divide-gray-200">
+                        <!-- Results will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+            <div id="emptyState" class="py-12 text-center">
+                <i class="fas fa-search text-gray-300 text-4xl mb-3"></i>
+                <p class="text-gray-500">Nhập SBD để tra cứu thông tin</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-8 text-center text-gray-500 text-sm">
+            <p>© 2023 Hệ Thống Tra Cứu Điểm Thi. Bản quyền thuộc về Bộ Giáo Dục.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Sample data
+        const studentData = [
+            { sbd: "001", name: "Nguyễn Văn A", score: 28.5 },
+            { sbd: "002", name: "Trần Thị B", score: 24.0 },
+            { sbd: "003", name: "Lê Văn C", score: 26.75 },
+            { sbd: "004", name: "Phạm Thị D", score: 22.5 },
+            { sbd: "005", name: "Hoàng Văn E", score: 27.25 },
+            { sbd: "006", name: "Vũ Thị F", score: 23.0 },
+            { sbd: "007", name: "Đặng Văn G", score: 25.5 },
+            { sbd: "008", name: "Bùi Thị H", score: 29.0 },
+            { sbd: "009", name: "Đỗ Văn I", score: 21.75 },
+            { sbd: "010", name: "Ngô Thị K", score: 20.5 }
+        ];
+
+        // DOM elements
+        const searchInput = document.getElementById('searchInput');
+        const clearBtn = document.getElementById('clearBtn');
+        const resultsBody = document.getElementById('resultsBody');
+        const emptyState = document.getElementById('emptyState');
+
+        // Initial render
+        renderResults(studentData);
+
+        // Event listeners
+        searchInput.addEventListener('input', handleSearch);
+        clearBtn.addEventListener('click', clearSearch);
+
+        // Functions
+        function handleSearch() {
+            const searchTerm = searchInput.value.trim().toLowerCase();
+            
+            if (searchTerm.length > 0) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+
+            const filteredData = studentData.filter(student => 
+                student.sbd.toLowerCase().includes(searchTerm)
+            );
+            
+            renderResults(filteredData);
+        }
+
+        function clearSearch() {
+            searchInput.value = '';
+            clearBtn.classList.add('hidden');
+            renderResults(studentData);
+        }
+
+        function renderResults(data) {
+            resultsBody.innerHTML = '';
+            
+            if (data.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            
+            data.forEach(student => {
+                const row = document.createElement('tr');
+                row.className = 'table-row hover:bg-gray-50 transition-colors';
+                
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${student.sbd}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${student.name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${student.score}</td>
+                `;
+                
+                resultsBody.appendChild(row);
+            });
+        }
+    </script>
+</body>
+</html>
